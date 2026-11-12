@@ -1,0 +1,34 @@
+# Environnement Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Caches des outils
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Données et artefacts : jamais versionnés dans git
+data/
+models/
+mlruns/
+
+# Secrets
+.env
+kaggle.json
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Système / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Journal de décisions personnel : reste en local, jamais commité
+docs/

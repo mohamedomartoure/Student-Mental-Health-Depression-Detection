@@ -1,0 +1,85 @@
+[project]
+name = "depression"
+version = "0.1.0"
+description = "Prédiction du risque de dépression chez les étudiants"
+readme = "README.md"
+authors = [
+    { name = "2RE" }
+]
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[project.scripts]
+depression = "depression:main"
+
+[build-system]
+requires = ["uv_build>=0.13.8,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.4.0",
+    "mypy>=2.4.1",
+    "pre-commit>=4.7.0",
+    "pytest>=9.2.0",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.17.5",
+]
+
+# ─────────────────────────────── Ruff : lint + formatage ───────────────────────────────
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",  # pycodestyle : erreurs et avertissements de style (PEP 8)
+    "F",       # pyflakes : variables inutilisées, imports manquants, noms non définis
+    "I",       # isort : ordre des imports
+    "N",       # pep8-naming : conventions de nommage
+    "UP",      # pyupgrade : syntaxe Python moderne (3.12)
+    "B",       # flake8-bugbear : pièges classiques (arguments mutables par défaut…)
+    "SIM",     # flake8-simplify : code simplifiable
+    "C4",      # flake8-comprehensions : compréhensions plus idiomatiques
+    "PT",      # flake8-pytest-style : bonnes pratiques pytest
+    "PTH",     # flake8-use-pathlib : pathlib plutôt que os.path
+    "RET",     # flake8-return : cohérence des return
+    "PD",      # pandas-vet : mauvais usages de pandas
+    "NPY",     # numpy : API numpy obsolète, aléatoire non reproductible
+    "RUF",     # règles propres à ruff
+]
+
+[tool.ruff.lint.per-file-ignores]
+"notebooks/*" = ["E402"]  # imports en milieu de notebook : acceptable en exploration
+
+[tool.ruff.format]
+quote-style = "double"
+docstring-code-format = true
+
+# ─────────────────────────────── Mypy : typage statique ────────────────────────────────
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+pretty = true
+files = ["src", "tests"]
+
+# ─────────────────────────────── Pytest : tests ────────────────────────────────────────
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+    "-ra",                     # résumé des tests ignorés / en échec à la fin
+    "--strict-markers",        # un marqueur mal orthographié = erreur
+    "--strict-config",         # une option de config invalide = erreur
+    "--import-mode=importlib", # teste le package installé, recommandé avec le src layout
+]
+xfail_strict = true
+
+[tool.coverage.run]
+source = ["depression"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true

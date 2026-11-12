@@ -1,0 +1,53 @@
+# Contrôles exécutés automatiquement avant chaque commit.
+# Installation : uv run pre-commit install
+# Lancement manuel sur tout le dépôt : uv run pre-commit run --all-files
+
+repos:
+  # ── Hygiène générale des fichiers ──────────────────────────────────────────
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace        # espaces en fin de ligne
+      - id: end-of-file-fixer          # une ligne vide en fin de fichier
+      - id: check-yaml                 # YAML syntaxiquement valide
+      - id: check-toml                 # TOML valide (pyproject.toml)
+      - id: check-merge-conflict       # marqueurs <<<<<<< oubliés
+      - id: check-added-large-files    # bloque les fichiers > 500 Ko (ex. un CSV)
+        args: ["--maxkb=500"]
+      - id: detect-private-key         # bloque les clés privées
+
+  # ── Lockfile uv cohérent avec pyproject.toml ───────────────────────────────
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.13.7
+    hooks:
+      - id: uv-lock
+
+  # ── Ruff : lint (avec corrections auto) puis formatage ─────────────────────
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.5
+    hooks:
+      - id: ruff-check
+        args: ["--fix"]
+      - id: ruff-format
+
+  # ── Notebooks : suppression des sorties avant commit ───────────────────────
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.9.1
+    hooks:
+      - id: nbstripout
+
+  # ── Hooks locaux : utilisent l'environnement du projet ─────────────────────
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy (strict)
+        entry: uv run mypy
+        language: system
+        types: [python]
+        pass_filenames: false          # mypy analyse tout le projet (config pyproject)
+
+      - id: forbid-docs
+        name: docs/ ne doit jamais être commité
+        entry: "Le dossier docs/ est local uniquement (voir .gitignore)."
+        language: fail
+        files: ^docs/
